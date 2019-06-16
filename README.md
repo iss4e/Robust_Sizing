@@ -22,3 +22,5 @@ h: name of load file (for example, see load.txt)
 i: name of pv generation file (for example, see pv.txt)
 
 Note that for both SNC methods, parameter d is not used.
+
+The output will be in the results directory, with the suffix _sim.size, _snc_lolp.size, or _snc_eue.size, corresponding to the method used.
