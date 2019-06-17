@@ -35,6 +35,7 @@ Note that for both SNC methods, parameter d is not used.
 For example, suppose we wish to run the simulation method with LOLP target of 5%, confidence of 95% over any 100 day period. The price of PV panels is 2000/kW, the price of battery storage is 500/kWh, and the names of load and pv files are "load.txt" and "pv.txt" respectively, and the output file should have the prefix "test_output" . After downoading the code and going into the directory into which it was downloaded, we would write:
 
 > make
+
 > ./sim test_ouput 2000 500 0 0.05 0.95 100 load.txt pv.txt
 
 Then, check the results directory for the file test_output_sim.size, which will contain a line with three values in the following order: # of kWh of battery, # of kW of PV, and total cost of system.
