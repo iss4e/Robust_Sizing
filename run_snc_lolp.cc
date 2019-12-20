@@ -10,6 +10,11 @@
 
 using namespace std;
 
+double B_inv; // cost per cell
+double PV_inv; // cost per unit (kW) of PV
+double epsilon;
+double confidence;
+
 // Read data in and run simulations
 
 vector <double> read_data_from_file(string filename) {

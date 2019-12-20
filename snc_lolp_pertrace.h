@@ -5,8 +5,8 @@ using namespace std;
 double static T_u = 1.0; // this is the time unit, representing the number of hours in each time slot of the load and solar traces
 
 // these values are overwritten by command line input
-double static B_inv = 5.19; // cost per cell
-double static PV_inv = 2500.0; // cost per unit (kW) of PV
+extern double B_inv; // cost per cell
+extern double PV_inv; // cost per unit (kW) of PV
 
 double static num_cells = 200.0; // just a default value that will be updated every time we check a new battery sizee
 double static nominal_voltage_c = 3.8793;
@@ -40,8 +40,8 @@ double static pv_step = 0.2;
 int static number_of_chunks = 100;
 
 // these values are not used; command line input is used instead
-double static epsilon = 0.05;
-double static confidence = 0.95;
+extern double epsilon;
+extern double confidence;
 
 string static output_data_directory = "results/";
 

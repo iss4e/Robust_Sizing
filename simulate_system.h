@@ -5,9 +5,10 @@
 
 using namespace std;
 
-double static T_u = 1.0; // this is the time unit, representing the number of hours in each time slot of the load and solar traces
-double static B_inv = 5.19; // cost per cell
-double static PV_inv = 2500.0; // cost per unit (kW) of PV
+double static T_u = 0.5; // this is the time unit, representing the number of hours in each time slot of the load and solar traces
+
+extern double B_inv; // cost per cell
+extern double PV_inv; // cost per unit (kW) of PV
 
 double static num_cells = 200.0; // just a default value that will be updated every time we check a new battery size
 double static nominal_voltage_c = 3.8793;
@@ -27,25 +28,25 @@ string static output_data_directory = "results/";
 
 
 // sizing parameters (These are not used; the values are provided through command line interface)
-int static days_in_chunk = 100;
-double static epsilon = 0.05;
-string static epsilon_str = "0.05";
-double static confidence = 0.95;
-string static confidence_str = "0.95";
+extern int days_in_chunk;
+extern double epsilon;
+extern string epsilon_str;
+extern double confidence;
+extern string confidence_str;
+extern int metric; // 0 for LOLP, 1 for unmet load fraction. epsilon is treated as theta (unmet load fraction target) when metric == 1.
 
 // these are used
-int static metric = 0; // 0 for LOLP, 1 for unmet load fraction. epsilon is treated as theta (unmet load fraction target) when metric == 1.
-int static number_of_chunks = 100;
+extern int number_of_chunks;
 
 // define the upper and lower values to test for battery cells and pv, 
 // as well as the step size of the search
 double static CELLS_MIN = 0.0;
-double static CELLS_MAX = 13000.0;
-double static CELLS_STEP = 50.0; // search in step of 50 cells
+double static CELLS_MAX = 500000.0;
+double static CELLS_STEP = 100.0; // search in step of 50 cells
 
 double static PV_MIN = 0.0;
-double static PV_MAX = 60.0;
-double static PV_STEP = 0.2; //search in steps of 0.2 kW
+double static PV_MAX = 20000.0;
+double static PV_STEP = 0.5; //search in steps of 0.2 kW
 
 struct SimulationResult {
 

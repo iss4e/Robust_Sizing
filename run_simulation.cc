@@ -11,6 +11,16 @@
 
 using namespace std;
 
+// sizing parameters (These are not used; the values are provided through command line interface)
+double B_inv; // cost per cell
+double PV_inv; // cost per unit (kW) of PV
+int days_in_chunk;
+double epsilon;
+string epsilon_str;
+double confidence;
+string confidence_str;
+int metric; // 0 for LOLP, 1 for unmet load fraction. epsilon is treated as theta (unmet load fraction target) when metric == 1.
+int number_of_chunks;
 // Read data in and run simulations
 
 vector <double> read_data_from_file(string filename) {
@@ -61,7 +71,7 @@ void run_simulations(vector <double> &load, vector <double> &solar, string id, i
 		int chunk_start = rand() % solar.size();
 		int chunk_end = chunk_start + t_chunk_size;
 
-		vector <SimulationResult> sr = simulate(load, solar, chunk_start, chunk_end, 1);
+		vector <SimulationResult> sr = simulate(load, solar, chunk_start, chunk_end, 0);
 		results.push_back(sr);
 
 	}
@@ -110,7 +120,7 @@ int main(int argc, char ** argv) {
 
 	cout << argv[4] << endl;
 	string metric_string = argv[4];
-	int metric = stoi(metric_string);
+	metric = stoi(metric_string);
 
 	cout << argv[5] << endl;
 	string epsilon_string = argv[5];
@@ -122,7 +132,7 @@ int main(int argc, char ** argv) {
 
 	cout << argv[7] << endl;
 	string days_in_chunk_string = argv[7];
-	int days_in_chunk = stoi(days_in_chunk_string);
+	days_in_chunk = stoi(days_in_chunk_string);
 
 	cout << argv[8] << endl;
 	string loadfile = argv[8];
@@ -131,7 +141,7 @@ int main(int argc, char ** argv) {
 	string solarfile = argv[9];
 
 	// this parameter sets the number of random samples we take from the load and solar traces
-	//int number_of_chunks = 100;
+	number_of_chunks = 100;
 
 	// read in the data
 
