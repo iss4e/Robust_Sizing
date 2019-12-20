@@ -25,9 +25,9 @@ f: confidence
 
 g: number of days in each sample
 
-h: name of load file (for example, see load.txt)
+h: name of load file, values in kW (for example, see load.txt)
 
-i: name of pv generation file (for example, see pv.txt)
+i: name of pv generation file, values in kW (for example, see pv.txt)
 
 Note that for both SNC methods, parameter d is not used.
 
