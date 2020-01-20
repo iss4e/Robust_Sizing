@@ -1,12 +1,8 @@
 //simulate_system.h
 #include <vector>
+#include "system_parameters.h"
 using namespace std;
 
-double static T_u = 1.0; // this is the time unit, representing the number of hours in each time slot of the load and solar traces
-
-// these values are overwritten by command line input
-extern double B_inv; // cost per cell
-extern double PV_inv; // cost per unit (kW) of PV
 
 double static num_cells = 200.0; // just a default value that will be updated every time we check a new battery sizee
 double static nominal_voltage_c = 3.8793;
@@ -23,27 +19,9 @@ double static alpha_c = a2_intercept*1.0; // the 1 indicates the maximum chargin
 double static beta_u = a2_slope/(T_u*nominal_voltage_c);
 double static beta_l = a1_slope/(T_u*nominal_voltage_d);
 
-
-// define the upper and lower values to test for battery cells and pv, 
-// as well as the step size of the search
-
-/// one cell holds 0.011284 kWh (roughly 11 Wh)
-double static cells_min = 0.0;
-double static cells_max = 20000.0;
-double static cells_step = 50.0;
-
-// one unit of PV has 1 kW of capacity
-double static pv_min = 0.0;
-double static pv_max = 70.0;
-double static pv_step = 0.2;
-
-int static number_of_chunks = 100;
-
 // these values are not used; command line input is used instead
 extern double epsilon;
 extern double confidence;
-
-string static output_data_directory = "results/";
 
 struct SimulationResult {
 

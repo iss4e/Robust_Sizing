@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include "simulate_system.h"
+#include "system_parameters.h"
 
 using namespace std;
 

@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <limits>
 #include "simulate_system.h"
+#include "system_parameters.h"
 #include "cheby.h"
 
 using namespace std;
@@ -141,7 +142,7 @@ int main(int argc, char ** argv) {
 	string solarfile = argv[9];
 
 	// this parameter sets the number of random samples we take from the load and solar traces
-	number_of_chunks = 100;
+	// number_of_chunks = 100;
 
 	// read in the data
 

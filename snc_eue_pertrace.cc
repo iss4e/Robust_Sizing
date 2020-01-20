@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include "snc_eue_pertrace.h"
+#include "system_parameters.h"
 
 void update_parameters(double n) {
 
@@ -247,8 +248,8 @@ SimulationResult snc_eue(vector <double> &load_trace, vector <double> &solar_tra
 
 	// first, find the lowest value of cells that will get us epsilon loss when the PV is maximized
 	// use binary search
-	double cells_U = cells_max;
-	double cells_L = cells_min;
+	double cells_U = CELLS_MAX;
+	double cells_L = CELLS_MIN;
 	double mid_cells = 0.0;
 	double loss = 0.0;
 
@@ -258,14 +259,14 @@ SimulationResult snc_eue(vector <double> &load_trace, vector <double> &solar_tra
 	// cout << "loss: " << loss << endl;
 	// return SimulationResult(0,0,0);
 	
-	while (cells_U - cells_L > cells_step) {
+	while (cells_U - cells_L > CELLS_STEP) {
 
 		mid_cells = (cells_L + cells_U) / 2.0;
 		update_parameters(mid_cells);
 
-		snc_eue_core(load_trace, solar_trace, start_indices, end_indices, epsilon, confidence, traceLength, pv_max, losses);
+		snc_eue_core(load_trace, solar_trace, start_indices, end_indices, epsilon, confidence, traceLength, PV_MAX, losses);
 		bool valid = check_losses(losses, numTraces, epsilon, confidence);
-		//cout << "snc result with " << a2_intercept << " kWh and " << pv_max << " pv: " << endl;
+		//cout << "snc result with " << a2_intercept << " kWh and " << PV_MAX << " pv: " << endl;
 		//print_losses(losses,numTraces);
 		if (!valid) {
 			cells_L = mid_cells;
@@ -277,17 +278,17 @@ SimulationResult snc_eue(vector <double> &load_trace, vector <double> &solar_tra
 
 	// set the starting number of battery cells to be the upper limit that was converged on
 	double starting_cells = cells_U;
-	double starting_cost = B_inv*starting_cells + PV_inv*pv_max;
-	double lowest_feasible_pv = pv_max;
+	double starting_cost = B_inv*starting_cells + PV_inv*PV_MAX;
+	double lowest_feasible_pv = PV_MAX;
 
 
 	double lowest_cost = starting_cost;
 	double lowest_B = starting_cells*kWh_in_one_cell;
-	double lowest_C = pv_max;
+	double lowest_C = PV_MAX;
 
 	double *losses_prev = new double [numTraces];
 
-	for (double cells = starting_cells; cells <= cells_max; cells += cells_step) {
+	for (double cells = starting_cells; cells <= CELLS_MAX; cells += CELLS_STEP) {
 
 		update_parameters(cells);
 
@@ -295,10 +296,10 @@ SimulationResult snc_eue(vector <double> &load_trace, vector <double> &solar_tra
 
 		while (true) {
 
-			snc_eue_core(load_trace, solar_trace, start_indices, end_indices, epsilon, confidence, traceLength, lowest_feasible_pv - pv_step, losses);
+			snc_eue_core(load_trace, solar_trace, start_indices, end_indices, epsilon, confidence, traceLength, lowest_feasible_pv - PV_STEP, losses);
 			bool valid = check_losses(losses, numTraces, epsilon, confidence);
 			if (valid) {
-				lowest_feasible_pv -= pv_step;
+				lowest_feasible_pv -= PV_STEP;
 				for (int trace = 0; trace < numTraces; trace++) {
 					losses_prev[trace] = losses[trace];
 				}

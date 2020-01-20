@@ -8,7 +8,7 @@ To run stochastic network calculus method for sizing with LOLP target:
 ./snc_lolp a b c e f g h i
 
 To run stochastic network calculus method for sizing with EUE target:
-./snc_eue a b d e f g h i
+./snc_eue a b c e f g h i
 
 
 a: name of output file 

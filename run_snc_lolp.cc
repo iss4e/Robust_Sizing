@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <limits>
 #include "snc_lolp_pertrace.h"
+#include "system_parameters.h"
 
 using namespace std;
 
@@ -74,7 +75,9 @@ void run_snc_lolp(vector <double> &load, vector <double> &solar, string id, doub
 	}
 
 	SimulationResult sr = snc_lolp(load, solar, chunk_starts, chunk_ends, epsilon, confidence, t_chunk_size);
+	cout << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
 	resultsfile << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
+
 
 	resultsfile.close();
 
@@ -116,7 +119,7 @@ int main(int argc, char ** argv) {
 	string solarfile = argv[8];
 
 	// this parameter sets the number of random samples we take from the load and solar traces
-	//int number_of_chunks = 100;
+	// number_of_chunks = 100;
 
 	// read in the data
 
