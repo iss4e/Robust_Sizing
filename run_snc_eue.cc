@@ -50,17 +50,12 @@ vector <double> read_data_from_file(string filename) {
 // epsilon: number in range [0,1] representing LOLP or unmet load fraction.
 // chunk_size: length of time (in days)
 
-
-void run_snc_eue(vector <double> &load, vector <double> &solar, string id, double epsilon, double confidence, int chunk_size) {
-
+SimulationResult run_snc_eue(vector <double> &load, vector <double> &solar, double epsilon, double confidence, int chunk_size) {
 	// use this random seed
-	//srand(10);
+	// srand(10);
 
 	// get number of timeslots in each chunk
 	int t_chunk_size = chunk_size*(24/T_u);
-
-	ofstream resultsfile;
-	resultsfile.open(output_data_directory + id + "_snc_eue.size");
 
 	vector <int> chunk_starts;
 	vector <int> chunk_ends;
@@ -77,23 +72,14 @@ void run_snc_eue(vector <double> &load, vector <double> &solar, string id, doubl
 			sum_solar += solar[index % solar.size()];
 			sum_load += load[index % solar.size()];
 		}
-
 	}
 
-	SimulationResult sr = snc_eue(load, solar, chunk_starts, chunk_ends, epsilon, confidence, t_chunk_size);
-	cout << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
-	resultsfile << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
-
-
-	resultsfile.close();
-
-	return;
+	return snc_eue(load, solar, chunk_starts, chunk_ends, epsilon, confidence, t_chunk_size);
 }
 
 int main(int argc, char ** argv) {
-
 	// uncomment this to specify a specific seed for RNG
-	//srand(10);
+	// srand(10);
 
 	cout << argv[1] << endl;
 	string outputfile = argv[1];
@@ -146,8 +132,8 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 
+	SimulationResult sr = run_snc_eue(load, solar, epsilon, confidence, days_in_chunk);
+	cout << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
 
-	run_snc_eue(load, solar, outputfile, epsilon, confidence, days_in_chunk);
-
+	return 0;
 }
-
