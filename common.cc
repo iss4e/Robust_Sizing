@@ -38,8 +38,6 @@ vector<double> read_data_from_file(string filename) {
     	data.push_back(value);
     }
 
-    cout << "read data " << filename << " size = " << data.size() << endl;
-
     return data;
 }
 

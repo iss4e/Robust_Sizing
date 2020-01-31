@@ -349,4 +349,4 @@ SimulationResult snc_eue(vector <double> &load_trace, vector <double> &solar_tra
 
 	return SimulationResult(lowest_B, lowest_C, lowest_cost);
 
-} 
+}
