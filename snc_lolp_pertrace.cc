@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cstring>
 #include "snc_lolp_pertrace.h"
-#include "system_parameters.h"
 
 void update_parameters(double n) {
 
