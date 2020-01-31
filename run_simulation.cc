@@ -70,7 +70,7 @@ int main(int argc, char ** argv) {
 	}
 	
 	SimulationResult sr = run_simulations(load, solar, metric, days_in_chunk, number_of_chunks, false);
-	cout << sr.B << " " << sr.C << " " << sr.cost << endl;
+	cout << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
 
 	return 0;
 }
