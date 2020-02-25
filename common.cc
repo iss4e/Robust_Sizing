@@ -16,15 +16,13 @@ int days_in_chunk;
 vector<double> load;
 vector<double> solar;
 
-vector<double> read_data_from_file(string filename) {
-    
-    vector <double> data;
+vector<double> read_data_from_file(istream &datafile, int limit = INT_MAX) {
 
-	ifstream datafile(filename.c_str());
+    vector <double> data;
 
 	if (datafile.fail()) {
     	data.push_back(-1);
-    	cerr << errno << ": read data file " << filename << " failed." << endl;
+    	cerr << errno << ": read data file failed." << endl;
     	return data;
   	}
 
@@ -32,7 +30,7 @@ vector<double> read_data_from_file(string filename) {
     string line;
     double value;
 
-    while (getline(datafile, line)) {
+    for (int i = 0; i < limit && getline(datafile, line); ++i) {
     	istringstream iss(line);
     	iss >> value;
     	data.push_back(value);
@@ -42,6 +40,7 @@ vector<double> read_data_from_file(string filename) {
 }
 
 int process_input(char** argv, bool process_metric_input) {
+    
     int i = 0;
     
     string inv_PV_string = argv[++i];
@@ -100,34 +99,25 @@ int process_input(char** argv, bool process_metric_input) {
     cout << "loadfile = " << loadfile << endl;
 #endif
 
-    string solarfile = argv[++i];
+    if (loadfile == string("--")) {
+        // read from cin
+        int limit = stoi(argv[++i]);
 
 #ifdef DEBUG
-    cout << "solarfile = " << solarfile << endl;
+        cout << "reading load data from stdin. limit = " << limit << endl;
 #endif
 
-	// read in data into vector
+        load = read_data_from_file(cin, limit);
+    } else {
 
 #ifdef DEBUG
-	cout << "reading solarfile..." << endl;
+        cout << "reading load file" << endl;
 #endif
 
-	solar = read_data_from_file(solarfile);
-
-#ifdef DEBUG
-	cout << "checking for errors in solar file..." << endl;
-#endif
-
-	if (solar[0] < 0) {
-		cerr << "error reading solar file " << solarfile << endl;
-		return 1;
-	}
-
-#ifdef DEBUG
-	cout << "reading loadfile..." << endl;
-#endif
-
-	load = read_data_from_file(loadfile);
+        // read in data into vector
+        ifstream loadstream(loadfile.c_str());
+        load = read_data_from_file(loadstream);
+    }
 
 #ifdef DEBUG
 	cout << "checking for errors in load file..." << endl;
@@ -135,6 +125,41 @@ int process_input(char** argv, bool process_metric_input) {
 
 	if (load[0] < 0) {
 		cerr << "error reading load file " << loadfile << endl;
+		return 1;
+	}
+
+    string solarfile = argv[++i];
+
+#ifdef DEBUG
+    cout << "solarfile = " << solarfile << endl;
+#endif
+
+    if (solarfile == string("--")) {
+
+#ifdef DEBUG
+        cout << "reading solar file" << endl;
+#endif
+
+        // read from cin
+        int limit = stoi(argv[++i]);
+
+#ifdef DEBUG
+        cout << "reading solar data from stdin. limit = " << limit << endl;
+#endif
+
+        solar = read_data_from_file(cin, limit);
+    } else {
+        // read in data into vector
+        ifstream solarstream(solarfile.c_str());
+        solar = read_data_from_file(solarstream);
+    }
+
+#ifdef DEBUG
+	cout << "checking for errors in solar file..." << endl;
+#endif
+
+	if (solar[0] < 0) {
+		cerr << "error reading solar file " << solarfile << endl;
 		return 1;
 	}
 

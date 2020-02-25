@@ -58,6 +58,12 @@ make
 ./snc_eue 2000 500 0.05 0.95 100 load.txt pv.txt
 ```
 
+We can also take electricity load and pv generation metrics through stdin. Instead of entering the file name in the command, enter `--` followed by number of lines to be taken in stdin. For example,
+```bash
+./sim 2000 500 0 0.01 0.95 100 -- 8760 -- 8760
+```
+would first take 8760 lines of load metrics, then 8760 lines of pv metrics.
+
 The output values will be in the standard ouput. It contains a line with three values in the following order, separated by tabs: # of kWh of battery, # of kW of PV, and total cost of the system.
 
 To output the results into a file, add `>> output.file` at the end of the command:
