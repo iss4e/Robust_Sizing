@@ -31,7 +31,8 @@ void compute_I(vector <double> &load_trace, vector <double> &solar_trace,
 					 vector <int> &start_indices, vector <int> &end_indices, double PV, const int traceLength) {
 
 	int numTraces = start_indices.size();
-
+	int solar_size = solar_trace.size();
+	int load_size = load_trace.size();
 
 	/////////////////////////////
 	// Yashar: Mean(Pin) and Mean(Pout) is the average of what is happening at the same time at any day within the same season
@@ -55,19 +56,20 @@ void compute_I(vector <double> &load_trace, vector <double> &solar_trace,
 		int gt0_diff = 0;
 		for (int k = 0; k < traceLength; k++) {		
 			
-			int index = (start_indices[trace] + k) % solar_trace.size();
+			int index_solar = (start_indices[trace] + k) % solar_size;
+			int index_load = (start_indices[trace] + k) % load_size;
 
-			P_in[trace][k] = fmin(fmax((solar_trace[index]*PV) - load_trace[index], 0), alpha_c);
-			P_out[trace][k] = fmin(fmax(load_trace[index] - (solar_trace[index]*PV), 0), alpha_d);
+			P_in[trace][k] = fmin(fmax((solar_trace[index_solar]*PV) - load_trace[index_load], 0), alpha_c);
+			P_out[trace][k] = fmin(fmax(load_trace[index_load] - (solar_trace[index_solar]*PV), 0), alpha_d);
 			P_net[trace][k] = (1/eta_d)*(eta_d*eta_c*P_in[trace][k] - P_out[trace][k]); //Yashar: defined as the round-trip efficiency
 
-			double diff = load_trace[index] - solar_trace[index]*PV;
+			double diff = load_trace[index_load] - solar_trace[index_solar]*PV;
 			if (diff > 0) {
 				gt0_diff += 1;
 				sum_diff += diff;
 			}
 
-			mean_D[trace] += load_trace[index];
+			mean_D[trace] += load_trace[index_load];
 
 			/*sum_P_in += P_in[trace][k];
 			sum_P_out += P_out[trace][k];

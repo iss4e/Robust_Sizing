@@ -26,15 +26,17 @@ void computePowers(vector <double> &load_trace, vector <double> &solar_trace,
 					 vector <int> &start_indices, vector <int> &end_indices, double PV, const int traceLength, double * LOLP_1_array) {
 
 	int numTraces = start_indices.size();
-	
+	int solar_size = solar_trace.size();
+	int load_size = load_trace.size();
 	for (int k = 0; k < traceLength; k++){
 
 		for (int trace = 0; trace < numTraces; trace++) {
 			
-			int index = (start_indices[trace] + k) % solar_trace.size();
+			int index_solar = (start_indices[trace] + k) % solar_size;
+			int index_load = (start_indices[trace] + k) % load_size;
 
-			P_in[trace][k] = fmin(fmax((solar_trace[index]*PV) - load_trace[index], 0), alpha_c);
-			P_out[trace][k] = fmin(fmax(load_trace[index] - (solar_trace[index]*PV), 0), alpha_d);
+			P_in[trace][k] = fmin(fmax((solar_trace[index_solar]*PV) - load_trace[index_load], 0), alpha_c);
+			P_out[trace][k] = fmin(fmax(load_trace[index_load] - (solar_trace[index_solar]*PV), 0), alpha_d);
 			P_net[trace][k] = (1/eta_d)*(eta_d*eta_c*P_in[trace][k] - P_out[trace][k]);
 
 		}
@@ -44,8 +46,9 @@ void computePowers(vector <double> &load_trace, vector <double> &solar_trace,
 	for (int trace = 0; trace < numTraces; trace++) {
 		
 		for (int i=0; i < traceLength; i++) {
-			int index = (start_indices[trace] + i) % traceLength;
-			if (solar_trace[index]*PV < load_trace[index]){
+			int index_solar = (start_indices[trace] + i) % solar_size;
+			int index_load = (start_indices[trace] + i) % load_size;
+			if (solar_trace[index_solar]*PV < load_trace[index_load]){
 				num_loss++;
 			}
 		}
