@@ -70,23 +70,26 @@ double sim(vector <double> &load_trace, vector <double> &solar_trace, int start_
 	double load_deficit = 0;
 	double load_sum = 0;
 
-	int trace_length = solar_trace.size();
+	int trace_length_solar = solar_trace.size();
+	int trace_length_load = load_trace.size();
 
 	double c = 0.0;
 	double d = 0.0;
 	double max_c = 0.0;
 	double max_d = 0.0;
-	int index_t;
+	int index_t_solar;
+	int index_t_load;
 	for (int t = start_index; t < end_index; t++) {
 
 		// wrap around to the start of the trace if we hit the end.
-		index_t = t % trace_length;
+		index_t_solar = t % trace_length_solar;
+		index_t_load = t % trace_length_load;
 
-		load_sum += load_trace[index_t];
+		load_sum += load_trace[index_t_load];
 
 		// first, calculate how much power is available for charging, and how much is needed to discharge
-		c = fmax(solar_trace[index_t]*pv - load_trace[index_t],0);
-		d = fmax(load_trace[index_t] - solar_trace[index_t]*pv, 0);
+		c = fmax(solar_trace[index_t_solar]*pv - load_trace[index_t_load],0);
+		d = fmax(load_trace[index_t_load] - solar_trace[index_t_solar]*pv, 0);
 
 		// constrain the power
 		max_c = fmin(calc_max_charging(c,b), alpha_c);

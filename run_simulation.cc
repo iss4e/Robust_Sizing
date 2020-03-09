@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
+#include <algorithm>
 #include "simulate_system.h"
 #include "system_parameters.h"
 #include "cheby.h"
@@ -21,7 +22,7 @@ string epsilon_str;
 double confidence;
 string confidence_str;
 int metric; // 0 for LOLP, 1 for unmet load fraction. epsilon is treated as theta (unmet load fraction target) when metric == 1.
-int number_of_chunks;
+//int number_of_chunks;
 // Read data in and run simulations
 
 vector <double> read_data_from_file(string filename) {
@@ -69,7 +70,7 @@ void run_simulations(vector <double> &load, vector <double> &solar, string id, i
 	// get random start times and run simulation on this chunk of data
 	for (int chunk_num = 0; chunk_num < number_of_chunks; chunk_num += 1) {
 
-		int chunk_start = rand() % solar.size();
+		int chunk_start = rand() % max(solar.size(),load.size());
 		int chunk_end = chunk_start + t_chunk_size;
 
 		vector <SimulationResult> sr = simulate(load, solar, chunk_start, chunk_end, 0);
