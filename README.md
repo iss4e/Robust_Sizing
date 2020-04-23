@@ -8,17 +8,17 @@ make
 ### To run programs
 Simulation method for sizing:
 ```
-./sim b c d e f g h i
+./bin/sim b c d e f g h i
 ```
 
 Stochastic network calculus method for sizing with LOLP target:
 ```
-./snc_lolp b c e f g h i
+./bin/snc_lolp b c e f g h i
 ```
 
 Stochastic network calculus method for sizing with EUE target:
 ```
-./snc_eue b c e f g h i
+./bin/snc_eue b c e f g h i
 ```
 
 Where:
@@ -46,16 +46,16 @@ For example, suppose we wish to run the simulation method with LOLP target of 1%
 make
 
 # Simulation Method LOLP
-./sim 2000 500 0 0.01 0.95 100 load.txt pv.txt
+./bin/sim 2000 500 0 0.01 0.95 100 example_inputs/load.txt example_inputs/pv.txt
 
 # SNC Method LOLP
-./snc_lolp 2000 500 0.01 0.95 100 load.txt pv.txt
+./bin/snc_lolp 2000 500 0.01 0.95 100 example_inputs/load.txt example_inputs/pv.txt
 
 # Simulation Method EUE
-./sim 2000 500 1 0.05 0.95 100 load.txt pv.txt
+./bin/sim 2000 500 1 0.05 0.95 100 example_inputs/load.txt example_inputs/pv.txt
 
 # SNC Method EUE
-./snc_eue 2000 500 0.05 0.95 100 load.txt pv.txt
+./bin/snc_eue 2000 500 0.05 0.95 100 example_inputs/load.txt example_inputs/pv.txt
 ```
 
 We can also take electricity load and pv generation metrics through stdin. Instead of entering the file name in the command, enter `--` followed by number of lines to be taken in stdin. For example,
@@ -68,7 +68,7 @@ The output values will be in the standard ouput. It contains a line with three v
 
 To output the results into a file, add `>> output.file` at the end of the command:
 ```bash
-./sim 2000 500 0 0.01 0.95 100 load.txt pv.txt >> output.txt
+./bin/sim 2000 500 0 0.01 0.95 100 example_inputs/load.txt example_inputs/pv.txt >> results/output.txt
 ```
 
 Additional configuration parameters, such as the size of the search space, or the number of samples taken from the input files, can be found in the corresponding .h file of each method, or `common.h`.

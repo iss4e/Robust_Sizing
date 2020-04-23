@@ -1,5 +1,4 @@
+.DS_Store
 .vscode
 /results/
-/sim
-/snc_eue
-/snc_lolp
+/bin/
