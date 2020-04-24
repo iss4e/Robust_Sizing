@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cstring>
 #include "snc_eue_pertrace.h"
-#include "system_parameters.h"
 
 void update_parameters(double n) {
 
@@ -352,4 +351,4 @@ SimulationResult snc_eue(vector <double> &load_trace, vector <double> &solar_tra
 
 	return SimulationResult(lowest_B, lowest_C, lowest_cost);
 
-} 
+}

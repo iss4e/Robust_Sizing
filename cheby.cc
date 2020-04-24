@@ -4,8 +4,7 @@
 #include <limits>
 #include <iostream>
 #include <fstream>
-#include "simulate_system.h"
-#include "system_parameters.h"
+#include "cheby.h"
 
 using namespace std;
 

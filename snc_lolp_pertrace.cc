@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cstring>
 #include "snc_lolp_pertrace.h"
-#include "system_parameters.h"
 
 void update_parameters(double n) {
 
@@ -264,4 +263,4 @@ SimulationResult snc_lolp(vector <double> &load_trace, vector <double> &solar_tr
 
 	return SimulationResult(lowest_B, lowest_C, lowest_cost);
 
-} 
+}
