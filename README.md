@@ -60,7 +60,7 @@ make
 
 We can also take electricity load and pv generation metrics through stdin. Instead of entering the file name in the command, enter `--` followed by number of lines to be taken in stdin. For example,
 ```bash
-./sim 2000 500 0 0.01 0.95 100 -- 8760 -- 8760
+./bin/sim 2000 500 0 0.01 0.95 100 -- 8760 -- 8760
 ```
 would first take 8760 lines of load metrics, then 8760 lines of pv metrics.
 
