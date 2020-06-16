@@ -86,7 +86,7 @@ vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <v
 
 	// create vector of values interpolating each point
 
-	double max_val = fmax(PV_MAX,CELLS_MAX*kWh_in_one_cell);
+	double max_val = fmax(pv_max, cells_max * kWh_in_one_cell);
 
 	// step size of chebyshev curve
 	double step = 0.2;
@@ -189,7 +189,7 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 	double lowest_B;
 	double lowest_C;
 
-	for (double B_val = 0.0; B_val <= CELLS_MAX*kWh_in_one_cell; B_val += CELLS_STEP*kWh_in_one_cell) {
+	for (double B_val = 0.0; B_val <= cells_max * kWh_in_one_cell; B_val += cells_step * kWh_in_one_cell) {
 
 		double C1 = interpolate(cheby_on_B[1], cheby_on_B[0], B_val, false);
 		double C2 = interpolate(cheby_on_C[0], cheby_on_C[1], B_val, false);
@@ -199,9 +199,9 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 		}
 
 		double C_max = fmax(C1, C2);
-		// ensure this value is on the search grid by rounding up to the nearest PV_STEP value
-		if (fmod(C_max,PV_STEP) != 0) {
-			C_max = C_max - fmod(C_max, PV_STEP) + PV_STEP;
+		// ensure this value is on the search grid by rounding up to the nearest pv_step value
+		if (fmod(C_max, pv_step) != 0) {
+			C_max = C_max - fmod(C_max, pv_step) + pv_step;
 		}
 
 		double cost = B_inv*(B_val/kWh_in_one_cell) + PV_inv*C_max;

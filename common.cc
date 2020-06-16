@@ -10,10 +10,19 @@
 
 double B_inv; // cost per cell
 double PV_inv; // cost per unit (kW) of PV
+
+double cells_min;
+double cells_max;
+double cells_step; // search in step of x cells
+double pv_min;
+double pv_max;
+double pv_step; // search in steps of x kW
+
 double epsilon;
 double confidence;
 int metric;
 int days_in_chunk;
+
 vector<double> load;
 vector<double> solar;
 
@@ -58,6 +67,36 @@ int process_input(char** argv, bool process_metric_input) {
 #ifdef DEBUG
     cout << "inv_B_string = " << inv_B_string 
          << ", B_inv = " << B_inv << endl;
+#endif
+
+    string pv_max_string = argv[++i];
+    pv_max = stod(pv_max_string);
+
+    // set default pv_min and pv_step
+    pv_min = 0;
+    pv_step = (pv_max - pv_min) / num_pv_steps;
+
+#ifdef DEBUG
+    cout << "pv_max_string = " << pv_max_string
+         << ", pv_max = " << pv_max
+         << ", pv_min = " << pv_min
+         << ", pv_step = " << pv_step
+         << endl;
+#endif
+
+    string cells_max_string = argv[++i];
+    cells_max = stod(cells_max_string) / kWh_in_one_cell;
+
+    // set default cells_min and cells_step
+    cells_min = 0;
+    cells_step = (cells_max - cells_min) / num_cells_steps;
+
+#ifdef DEBUG
+    cout << "cells_max_string = " << cells_max_string
+         << ", cells_max = " << cells_max
+         << ", cells_min = " << cells_min
+         << ", cells_step = " << cells_step
+         << endl;
 #endif
 
     if (process_metric_input) {

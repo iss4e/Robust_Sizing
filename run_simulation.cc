@@ -67,11 +67,17 @@ int main(int argc, char ** argv) {
 	int input_process_status = process_input(argv, true);
 
 	if (input_process_status) {
+		cerr << "Illegal input" << endl;
 		return 1;
 	}
 	
 	SimulationResult sr = run_simulations(load, solar, metric, days_in_chunk, number_of_chunks, false);
-	cout << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
+
+	// a temporary fix for "inf" issues.
+	// TODO: investigate later why some sr.cost == inf when B or C are low
+	
+	double cost = sr.B / kWh_in_one_cell * B_inv + sr.C * PV_inv;
+	cout << sr.B << "\t" << sr.C << "\t" << cost << endl;
 
 	return 0;
 }

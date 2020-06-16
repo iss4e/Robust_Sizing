@@ -2,13 +2,11 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-// #define DEBUG
-
 #include <vector>
 
 using namespace std;
 
-double static T_u = 1.0; // this is the time unit, representing the number of hours in each time slot of the load and solar traces
+// INPUTS
 
 extern double B_inv; // cost per cell
 extern double PV_inv; // cost per unit (kW) of PV
@@ -16,26 +14,31 @@ extern double epsilon;
 extern double confidence;
 extern int metric;
 extern int days_in_chunk;
+
 extern vector<double> load;
 extern vector<double> solar;
 
-// information about the data
-string static output_data_directory = "results/";
+// define the upper and lower values to test for battery cells and pv,
+// as well as the step size of the search
+extern double cells_min;
+extern double cells_max;
+extern double cells_step; // search in step of x cells
+
+extern double pv_min;
+extern double pv_max;
+extern double pv_step; // search in steps of x kW
+
+
+// CONSTANTS
 
 // defines the number of samples, set via command line input
 int static number_of_chunks = 100;
 
-// define the upper and lower values to test for battery cells and pv,
-// as well as the step size of the search
-double static CELLS_MIN = 0.0;
-double static CELLS_MAX = 20000.0;
-double static CELLS_STEP = 50.0; // search in step of 50 cells
-
-double static PV_MIN = 0.0;
-double static PV_MAX = 70.0;
-double static PV_STEP = 0.2; //search in steps of 0.2 kW
-
+double static T_u = 1.0; // this is the time unit, representing the number of hours in each time slot of the load and solar traces
 double static kWh_in_one_cell = 0.011284;
+double static num_cells_steps = 400; // search in total of n steps for cells
+double static num_pv_steps = 350; // search in total of n steps for pv
+
 
 struct SimulationResult {
 

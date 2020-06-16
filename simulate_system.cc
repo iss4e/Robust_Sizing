@@ -119,18 +119,18 @@ vector <SimulationResult> simulate(vector <double> &load_trace, vector <double> 
 
 	// first, find the lowest value of cells that will get us epsilon loss when the PV is maximized
 	// use binary search
-	double cells_U = CELLS_MAX;
-	double cells_L = CELLS_MIN;
+	double cells_U = cells_max;
+	double cells_L = cells_min;
 	double mid_cells = 0.0;
 	double loss = 0.0;
 
-	while (cells_U - cells_L > CELLS_STEP) {
+	while (cells_U - cells_L > cells_step) {
 
 		mid_cells = (cells_L + cells_U) / 2.0;
 
-		loss = sim(load_trace, solar_trace, start_index, end_index, mid_cells, PV_MAX, b_0);
+		loss = sim(load_trace, solar_trace, start_index, end_index, mid_cells, pv_max, b_0);
 
-		//cout << "sim result with " << a2_intercept << " kWh and " << PV_MAX << " pv: " << loss << endl;
+		//cout << "sim result with " << a2_intercept << " kWh and " << pv_max << " pv: " << loss << endl;
 		if (loss > epsilon) {
 			cells_L = mid_cells;
 		} else {
@@ -141,28 +141,28 @@ vector <SimulationResult> simulate(vector <double> &load_trace, vector <double> 
 
 	// set the starting number of battery cells to be the upper limit that was converged on
 	double starting_cells = cells_U;
-	double starting_cost = B_inv*starting_cells + PV_inv*PV_MAX;
-	double lowest_feasible_pv = PV_MAX;
+	double starting_cost = B_inv*starting_cells + PV_inv * pv_max;
+	double lowest_feasible_pv = pv_max;
 
 
 	double lowest_cost = starting_cost;
 	double lowest_B = starting_cells*kWh_in_one_cell;
-	double lowest_C = PV_MAX;
+	double lowest_C = pv_max;
 
 	vector <SimulationResult> curve;
 	curve.push_back(SimulationResult(starting_cells*kWh_in_one_cell, lowest_feasible_pv, starting_cost));
 	//cout << "starting cells: " << starting_cells << endl;
 
-	for (double cells = starting_cells; cells <= CELLS_MAX; cells += CELLS_STEP) {
+	for (double cells = starting_cells; cells <= cells_max; cells += cells_step) {
 
 		// for each value of cells, find the lowest pv that meets the epsilon loss constraint
 		double loss = 0;
 		while (true) {
 			
-			loss = sim(load_trace, solar_trace, start_index, end_index, cells, lowest_feasible_pv - PV_STEP, b_0);
+			loss = sim(load_trace, solar_trace, start_index, end_index, cells, lowest_feasible_pv - pv_step, b_0);
 
 			if (loss < epsilon) {
-				lowest_feasible_pv -= PV_STEP;
+				lowest_feasible_pv -= pv_step;
 			} else {
 				break;
 			}
