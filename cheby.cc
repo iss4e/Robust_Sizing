@@ -138,30 +138,31 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 
 	int n = sizing_curves.size();
 
+#ifdef DEBUG
+    cout << "calculate_sample_bound: sizing_curve.size() = " << n << ", epsilon = " << epsilon << ", confidence = " << confidence << endl;
+#endif
+
 	// create arrays for all B and C values
 
 	vector < vector <double> > B_values(n);
 	vector < vector <double> > C_values(n);
-	for (int i = 0; i < n; i +=  1) {
-		
+
+	for (int i = 0; i < n; ++i) {
 		int n_curve = sizing_curves[i].size();
 		vector <double> Bs;
 		vector <double> Cs;
 
-		for (int j = 0; j < n_curve; j += 1) {
+		double last_B = -1, last_C = -1;
 
-			double B = sizing_curves[i][j].B;
-			double C = sizing_curves[i][j].C;
-
-			// skip this point if both values are not unique
-			if (j > 0 && (Bs[j-1] == B || Cs[j-1] == C)) {
-				continue;
+		for (auto& sim_result: sizing_curves[i]) {
+			if (sim_result.B != last_B && sim_result.C != last_C) {
+				Bs.push_back(sim_result.B);
+				Cs.push_back(sim_result.C);
+				last_B = sim_result.B;
+				last_C = sim_result.C;
 			}
-			
-			Bs.push_back(B);
-			Cs.push_back(C);
-
 		}
+
 		B_values[i] = Bs;
 		C_values[i] = Cs;
 	}
