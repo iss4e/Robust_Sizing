@@ -170,22 +170,22 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence);
 	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence);
 
-	// uncomment code below to write the coordinates of both chebyshev curves to files.
-	/*ofstream c_outfile;
-	c_outfile.open("cheb_on_c.txt");
-	ofstream b_outfile;
-	b_outfile.open("cheb_on_b.txt");
+#ifdef DEBUG
+	// print chebyshev curves to files.
+	cout << "DEBUG: cheby_on_C" << endl;
+	cout << cheby_on_C[0].size() << endl;
 	for (int i = 0; i < cheby_on_C[0].size(); i++) {
-		c_outfile << cheby_on_C[0][i] << " " << cheby_on_C[1][i] << endl;
+		cout << cheby_on_C[0][i] << "\t" << cheby_on_C[1][i] << endl;
 	}
+
+	cout << "DEBUG: cheby_on_B" << endl;
+	cout << cheby_on_B[0].size() << endl;
 	for (int i = 0; i < cheby_on_B[0].size(); i++) {
-		b_outfile << cheby_on_B[1][i] << " " << cheby_on_B[0][i] << endl;
+		cout << cheby_on_B[1][i] << "\t" << cheby_on_B[0][i] << endl;
 	}
-	c_outfile.close();
-	b_outfile.close();*/
+#endif
 
 	// search the upper envelope for the cheapest system
-
 	double lowest_cost = numeric_limits<double>::infinity();
 	double lowest_B;
 	double lowest_C;
@@ -205,12 +205,12 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 			C_max = C_max - fmod(C_max, pv_step) + pv_step;
 		}
 
-		double cost = B_inv*(B_val/kWh_in_one_cell) + PV_inv*C_max;
+		double cost = B_inv * (B_val / kWh_in_one_cell) + PV_inv * C_max;
 		if (cost < lowest_cost) {
 			lowest_cost = cost;
 			lowest_B = B_val;
 			lowest_C = C_max;
-			//cout << lowest_B << " " << lowest_C << " " << lowest_cost << endl;
+			// cout << lowest_B << " " << lowest_C << " " << lowest_cost << endl;
 		}
 	}
 
