@@ -20,10 +20,10 @@ using namespace std;
 // metric: 0 for LOLP, 1 for unmet load
 // epsilon: number in range [0,1] representing LOLP or unmet load fraction.
 // chunk_size: length of time (in days)
-SimulationResult run_simulations(vector <double> &load, vector <double> &solar, int metric, int chunk_size, int number_of_chunks, bool output_curves) {
+SimulationResult run_simulations(vector <double> &load, vector <double> &solar, int metric, int chunk_size, int number_of_chunks) {
 
 	// set random seed to a specific value if you want consistency in results
-	// srand(10);
+	srand(10);
 
 	// get number of timeslots in each chunk
 	int t_chunk_size = chunk_size*(24/T_u);
@@ -41,22 +41,17 @@ SimulationResult run_simulations(vector <double> &load, vector <double> &solar, 
 
 	}
 
+#ifdef DEBUG
 	// print all of the curves
-	// if (output_curves) {
-	// 	int chunk_index = 1;
-	// 	for(vector<vector<SimulationResult> >::iterator it = results.begin() ; it != results.end(); ++it) {
-			
-	// 		ofstream curvefile;
-	// 		curvefile.open(id + "_" + to_string(chunk_index) + ".out");
-			
-	// 		for (vector<SimulationResult>::iterator it2 = it->begin() ; it2 != it->end(); ++it2) {
-	// 			curvefile << it2->B << " " << it2->C << " " << it2->cost << endl;
-	// 		}
-			
-	// 		curvefile.close();
-	// 		chunk_index += 1;
-	// 	}
-	// }
+	int chunk_index = 1;
+	cout << "sizing curves" << endl;
+	for (vector<vector<SimulationResult>>::iterator it = results.begin(); it != results.end(); ++it, ++chunk_index) {
+		cout << "chunk_" << chunk_index << endl;
+		for (vector<SimulationResult>::iterator it2 = it->begin() ; it2 != it->end(); ++it2) {
+			cout << it2->B << "\t" << it2->C << "\t" << it2->cost << endl;
+		}
+	}
+#endif
 
 	// calculate the chebyshev curves, find the cheapest system along their upper envelope, and return it
 	return calculate_sample_bound(results, epsilon, confidence);
@@ -71,7 +66,7 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 	
-	SimulationResult sr = run_simulations(load, solar, metric, days_in_chunk, number_of_chunks, false);
+	SimulationResult sr = run_simulations(load, solar, metric, days_in_chunk, number_of_chunks);
 
 	// a temporary fix for "inf" issues.
 	// TODO: investigate later why some sr.cost == inf when B or C are low
