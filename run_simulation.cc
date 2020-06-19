@@ -44,13 +44,14 @@ SimulationResult run_simulations(vector <double> &load, vector <double> &solar, 
 #ifdef DEBUG
 	// print all of the curves
 	int chunk_index = 1;
-	cout << "sizing curves" << endl;
+	cout << "DEBUG: sizing_curves" << endl;
 	for (vector<vector<SimulationResult>>::iterator it = results.begin(); it != results.end(); ++it, ++chunk_index) {
 		cout << "chunk_" << chunk_index << endl;
 		for (vector<SimulationResult>::iterator it2 = it->begin() ; it2 != it->end(); ++it2) {
 			cout << it2->B << "\t" << it2->C << "\t" << it2->cost << endl;
 		}
 	}
+	cout << "DEBUG: sizing_curves_end" << endl;
 #endif
 
 	// calculate the chebyshev curves, find the cheapest system along their upper envelope, and return it
