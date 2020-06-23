@@ -81,7 +81,7 @@ double calculate_sample_lambda(int N, double bound) {
 }
 
 
-vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <vector <double> > &Y_vals, double confidence) {
+vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <vector <double> > &Y_vals, double confidence, double step) {
 
 	int n = X_vals.size();
 
@@ -90,7 +90,7 @@ vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <v
 	double max_val = fmax(PV_MAX,CELLS_MAX*kWh_in_one_cell);
 
 	// step size of chebyshev curve
-	double step = 0.2;
+	//double step = 0.2;
 
 	double lambda = calculate_sample_lambda(n, 1 - confidence);
 	
@@ -155,9 +155,9 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 			double C = sizing_curves[i][j].C;
 
 			// skip this point if both values are not unique
-			if (j > 0 && (Bs[j-1] == B || Cs[j-1] == C)) {
-				continue;
-			}
+			//if (j > 0 && (Bs[j-1] == B || Cs[j-1] == C)) {
+			//	continue;
+			//}
 			
 			Bs.push_back(B);
 			Cs.push_back(C);
@@ -167,8 +167,8 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 		C_values[i] = Cs;
 	}
 
-	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence);
-	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence);
+	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence, CELLS_STEP*kWh_in_one_cell);
+	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence, PV_STEP);
 
 	// uncomment code below to write the coordinates of both chebyshev curves to files.
 	/*ofstream c_outfile;
