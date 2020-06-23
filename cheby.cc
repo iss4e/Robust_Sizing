@@ -80,7 +80,7 @@ double calculate_sample_lambda(int N, double bound) {
 }
 
 
-vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <vector <double> > &Y_vals, double confidence) {
+vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <vector <double> > &Y_vals, double confidence, double step) {
 
 	int n = X_vals.size();
 
@@ -89,7 +89,7 @@ vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <v
 	double max_val = fmax(pv_max, cells_max * kWh_in_one_cell);
 
 	// step size of chebyshev curve
-	double step = 0.2;
+	//double step = 0.2;
 
 	double lambda = calculate_sample_lambda(n, 1 - confidence);
 	
@@ -154,21 +154,23 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 
 		double last_B = -1, last_C = -1;
 
+
 		for (auto& sim_result: sizing_curves[i]) {
-			if (sim_result.B != last_B && sim_result.C != last_C) {
-				Bs.push_back(sim_result.B);
-				Cs.push_back(sim_result.C);
-				last_B = sim_result.B;
-				last_C = sim_result.C;
-			}
+			//if (sim_result.B != last_B && sim_result.C != last_C) {
+			Bs.push_back(sim_result.B);
+			Cs.push_back(sim_result.C);
+				//last_B = sim_result.B;
+				//last_C = sim_result.C;
+			//}
+
 		}
 
 		B_values[i] = Bs;
 		C_values[i] = Cs;
 	}
 
-	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence);
-	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence);
+	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence, cells_step*kWh_in_one_cell);
+	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence, pv_step);
 
 #ifdef DEBUG
 	// print chebyshev curves to files.
