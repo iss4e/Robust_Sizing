@@ -4,8 +4,7 @@
 #include <limits>
 #include <iostream>
 #include <fstream>
-#include "simulate_system.h"
-#include "system_parameters.h"
+#include "cheby.h"
 
 using namespace std;
 
@@ -87,7 +86,7 @@ vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <v
 
 	// create vector of values interpolating each point
 
-	double max_val = fmax(PV_MAX,CELLS_MAX*kWh_in_one_cell);
+	double max_val = fmax(pv_max, cells_max * kWh_in_one_cell);
 
 	// step size of chebyshev curve
 	//double step = 0.2;
@@ -139,58 +138,61 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 
 	int n = sizing_curves.size();
 
+#ifdef DEBUG
+    cout << "calculate_sample_bound: sizing_curve.size() = " << n << ", epsilon = " << epsilon << ", confidence = " << confidence << endl;
+#endif
+
 	// create arrays for all B and C values
 
 	vector < vector <double> > B_values(n);
 	vector < vector <double> > C_values(n);
-	for (int i = 0; i < n; i +=  1) {
-		
+
+	for (int i = 0; i < n; ++i) {
 		int n_curve = sizing_curves[i].size();
 		vector <double> Bs;
 		vector <double> Cs;
 
-		for (int j = 0; j < n_curve; j += 1) {
+		double last_B = -1, last_C = -1;
 
-			double B = sizing_curves[i][j].B;
-			double C = sizing_curves[i][j].C;
 
-			// skip this point if both values are not unique
-			//if (j > 0 && (Bs[j-1] == B || Cs[j-1] == C)) {
-			//	continue;
+		for (auto& sim_result: sizing_curves[i]) {
+			//if (sim_result.B != last_B && sim_result.C != last_C) {
+			Bs.push_back(sim_result.B);
+			Cs.push_back(sim_result.C);
+				//last_B = sim_result.B;
+				//last_C = sim_result.C;
 			//}
-			
-			Bs.push_back(B);
-			Cs.push_back(C);
 
 		}
+
 		B_values[i] = Bs;
 		C_values[i] = Cs;
 	}
 
-	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence, CELLS_STEP*kWh_in_one_cell);
-	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence, PV_STEP);
+	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence, cells_step*kWh_in_one_cell);
+	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence, pv_step);
 
-	// uncomment code below to write the coordinates of both chebyshev curves to files.
-	/*ofstream c_outfile;
-	c_outfile.open("cheb_on_c.txt");
-	ofstream b_outfile;
-	b_outfile.open("cheb_on_b.txt");
+#ifdef DEBUG
+	// print chebyshev curves to files.
+	cout << "DEBUG: cheby_on_C" << endl;
+	cout << cheby_on_C[0].size() << endl;
 	for (int i = 0; i < cheby_on_C[0].size(); i++) {
-		c_outfile << cheby_on_C[0][i] << " " << cheby_on_C[1][i] << endl;
+		cout << cheby_on_C[0][i] << "\t" << cheby_on_C[1][i] << endl;
 	}
+
+	cout << "DEBUG: cheby_on_B" << endl;
+	cout << cheby_on_B[0].size() << endl;
 	for (int i = 0; i < cheby_on_B[0].size(); i++) {
-		b_outfile << cheby_on_B[1][i] << " " << cheby_on_B[0][i] << endl;
+		cout << cheby_on_B[1][i] << "\t" << cheby_on_B[0][i] << endl;
 	}
-	c_outfile.close();
-	b_outfile.close();*/
+#endif
 
 	// search the upper envelope for the cheapest system
-
 	double lowest_cost = numeric_limits<double>::infinity();
 	double lowest_B;
 	double lowest_C;
 
-	for (double B_val = 0.0; B_val <= CELLS_MAX*kWh_in_one_cell; B_val += CELLS_STEP*kWh_in_one_cell) {
+	for (double B_val = 0.0; B_val <= cells_max * kWh_in_one_cell; B_val += cells_step * kWh_in_one_cell) {
 
 		double C1 = interpolate(cheby_on_B[1], cheby_on_B[0], B_val, false);
 		double C2 = interpolate(cheby_on_C[0], cheby_on_C[1], B_val, false);
@@ -200,17 +202,17 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 		}
 
 		double C_max = fmax(C1, C2);
-		// ensure this value is on the search grid by rounding up to the nearest PV_STEP value
-		if (fmod(C_max,PV_STEP) != 0) {
-			C_max = C_max - fmod(C_max, PV_STEP) + PV_STEP;
+		// ensure this value is on the search grid by rounding up to the nearest pv_step value
+		if (fmod(C_max, pv_step) != 0) {
+			C_max = C_max - fmod(C_max, pv_step) + pv_step;
 		}
 
-		double cost = B_inv*(B_val/kWh_in_one_cell) + PV_inv*C_max;
+		double cost = B_inv * (B_val / kWh_in_one_cell) + PV_inv * C_max;
 		if (cost < lowest_cost) {
 			lowest_cost = cost;
 			lowest_B = B_val;
 			lowest_C = C_max;
-			//cout << lowest_B << " " << lowest_C << " " << lowest_cost << endl;
+			// cout << lowest_B << " " << lowest_C << " " << lowest_cost << endl;
 		}
 	}
 
